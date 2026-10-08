@@ -10,12 +10,82 @@
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--black);color:var(--cream);font:400 15px/1.6 Inter,system-ui,sans-serif;overflow-x:hidden}
+html{
+scroll-behavior:smooth;
+}
+
+body{
+scroll-snap-type:y proximity;
+}
+
+.sc{
+scroll-snap-align:start;
+scroll-snap-stop:normal;
+}
 a{color:inherit;text-decoration:none;cursor:pointer}
-.sc{position:relative;min-height:100svh;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--black);transition:background 1.2s,color 1.2s}
-.pt{height:100svh;min-height:0}.lt{background:var(--cream);color:var(--ink)}.lt.dk{background:var(--black);color:var(--cream)}
+.sc{
+position:relative;
+min-height:100svh;
+height:100svh;
+overflow:hidden;
+display:flex;
+align-items:center;
+justify-content:center;
+background:var(--black);
+color:var(--cream);
+margin:0;
+padding:0;
+border:0;
+outline:0;
+}
+
+.pt{
+height:100svh;
+min-height:100svh;
+}
+
+.lt{
+background:var(--cream);
+color:var(--ink);
+}
+.sc::after{
+content:"";
+position:absolute;
+inset:0;
+pointer-events:none;
+z-index:20;
+border:0;
+outline:0;
+}
+
+.sc + .sc{
+margin-top:-1px;
+}
+.lt.dk{
+background:var(--black);
+color:var(--cream);
+}
 .en{--t:1.5s var(--e);position:absolute;inset:0;clip-path:inset(0);transition:transform var(--t),opacity var(--t),filter var(--t),clip-path var(--t)}
-.ph{position:absolute;left:0;top:-8%;width:100%;height:116%;object-fit:cover;transform:translate3d(0,calc(var(--p,0)*-5%),0) scale(calc(1 + var(--a,0)*.05))}
-.ov{position:absolute;inset:0;z-index:2;background:linear-gradient(rgba(15,15,15,.4),rgba(15,15,15,0) 40%,rgba(15,15,15,.7));opacity:calc(.6 + var(--a,0)*.4)}
+.ph{
+position:absolute;
+left:-1px;
+top:-1px;
+width:calc(100% + 2px);
+height:calc(100% + 2px);
+object-fit:cover;
+transform:translate3d(0,calc(var(--p,0)*-5%),0) scale(calc(1 + var(--a,0)*.05))
+}
+.ov{
+position:absolute;
+inset:-1px;
+z-index:2;
+background:linear-gradient(
+rgba(15,15,15,.4),
+rgba(15,15,15,0) 40%,
+rgba(15,15,15,.7)
+);
+opacity:calc(.6 + var(--a,0)*.4)
+}
 .bk{z-index:1;transform:scale(1.04)}.sc[data-s=on] .bk{transform:scale(1.12);transition-duration:3s}.fr{z-index:2;transition-delay:.25s}
 .sc[data-s=off] .z0{transform:scale(1.12);opacity:0;filter:blur(12px)}
 .sc[data-s=off] .z1{transform:translateY(120px) scale(1.05);opacity:0}
@@ -85,14 +155,131 @@ H:{img:'',label:'A COLLECTION OF MEMORIES',head:'CHÚC MỪNG SINH NHẬT',name:
 T:{teacher:'Phạm Thị Quỳnh Nga',ctaT:'MỘT ĐIỀU MUỐN NÓI VỚI CÔ?',ctaD:'Nếu có một lời muốn gửi đến cô\ntrong ngày đặc biệt này...',cta:'GỬI LỜI CHÚC →',fin:'CẢM ƠN CÔ\nVÌ TẤT CẢ.',msg:'Chúc cô Phạm Thị Quỳnh Nga\nmột tuổi mới thật nhiều niềm vui,\nsức khỏe, hạnh phúc\nvà thật nhiều khoảnh khắc đáng nhớ.',bd:'HAPPY BIRTHDAY,\nCÔ NGA ♡',wT:'MỘT LỜI NHẮN\nDÀNH CHO CÔ',wD:'Hãy viết điều bạn muốn nói\nvới cô Phạm Thị Quỳnh Nga.',ok:'CẢM ƠN BẠN.',okD:'Lời chúc của bạn\nđã trở thành một phần\ncủa câu chuyện này.',vT:'NHỮNG ĐIỀU\nCHÚNG EM MUỐN NÓI'},
 M:[['Những ngày đầu tiên','Một chương mới bắt đầu.','s'],['Những tiết học','Từng bài giảng, từng ánh nhìn.','s'],['Những tiếng cười','','g'],['Những khoảnh khắc','','x'],['','','c'],['Những kỷ niệm','','g'],['Những điều chúng em sẽ nhớ','Cảm ơn cô.','x']].map(([t,c,k],i)=>({id:i,t,c,k,on:true,img:''})),
 A:{ip10:3,ip24:10,g24:50,cd:60,max:500,dup:30,on:true,mod:false,test:false},W:[],L:[],rl:0});
-let D;try{D=JSON.parse(localStorage.getItem(K))}catch(e){}D=D||I0();
+let D;
+
+async function loadData(){
+    try{
+        const res=await fetch('/api/site-data');
+        const result=await res.json();
+
+        if(result.ok && result.data){
+            D=result.data;
+            return;
+        }
+    }catch(e){
+        console.error('Không tải được dữ liệu từ server:',e);
+    }
+
+    try{
+        D=JSON.parse(localStorage.getItem(K));
+    }catch(e){
+        D=null;
+    }
+
+    if(!D) D=I0();
+
+    try{
+        await fetch('/api/site-data',{
+            method:'PUT',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify(D)
+        });
+    }catch(e){
+        console.error('Không thể chuyển dữ liệu lên server:',e);
+    }
+}
 const toast=m=>{const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),1800)};
-const save=()=>{try{localStorage.setItem(K,JSON.stringify(D))}catch(e){toast('Bộ nhớ trình duyệt đầy — dùng ảnh nhỏ hơn.')}};
+const save=async()=>{
+    try{
+        const res=await fetch('/api/site-data',{
+            method:'PUT',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify(D)
+        });
+
+        const result=await res.json();
+
+        if(!result.ok){
+            toast('Không thể lưu dữ liệu lên server.');
+        }
+    }catch(e){
+        console.error(e);
+        toast('Mất kết nối server.');
+    }
+};
 const app=$('#app'),Z=['z0','z1','z2','z3','z4','z5','z6'],red=matchMedia('(prefers-reduced-motion:reduce)').matches;
 let seen=0,io,raf,ADM=0,TAB='overview',FIL='all';
-function tick(){raf=0;if(red)return;const h=innerHeight;$$('.sc').forEach(s=>{const r=s.getBoundingClientRect();if(r.bottom<0||r.top>h)return;const p=Math.max(-1,Math.min(1,(r.top+r.height/2-h/2)/h));s.style.setProperty('--p',p.toFixed(3));s.style.setProperty('--a',Math.abs(p).toFixed(3))})}
-addEventListener('scroll',()=>{raf||(raf=requestAnimationFrame(tick))},{passive:true});
-function watch(){io&&io.disconnect();io=new IntersectionObserver(es=>es.forEach(e=>{const s=e.target;if(e.intersectionRatio>=.6||e.intersectionRect.height>=innerHeight*.6)s.dataset.s='on';else if(!e.isIntersecting)s.dataset.s='off'}),{threshold:Array.from({length:21},(_,i)=>i/20)});$$('.sc').forEach(s=>{s.dataset.s='off';io.observe(s)});tick()}
+function tick(){
+    raf=0;
+    if(red)return;
+
+    const h=innerHeight;
+
+    $$('.sc').forEach(s=>{
+        const r=s.getBoundingClientRect();
+
+        if(r.bottom<0||r.top>h)return;
+
+        const p=Math.max(
+            -1,
+            Math.min(
+                1,
+                (r.top+r.height/2-h/2)/h
+            )
+        );
+
+        s.style.setProperty('--p',p.toFixed(3));
+        s.style.setProperty('--a',Math.abs(p).toFixed(3));
+    });
+}
+
+addEventListener('scroll',()=>{
+   if(!raf){
+      raf=requestAnimationFrame(tick);
+   }
+},{passive:true});
+
+addEventListener('resize',()=>{
+   if(!raf){
+      raf=requestAnimationFrame(tick);
+   }
+},{passive:true});
+
+function watch(){
+    io&&io.disconnect();
+
+    io=new IntersectionObserver(
+        es=>es.forEach(e=>{
+            const s=e.target;
+
+            if(
+                e.intersectionRatio>=.6 ||
+                e.intersectionRect.height>=innerHeight*.6
+            ){
+                s.dataset.s='on';
+            }else if(!e.isIntersecting){
+                s.dataset.s='off';
+            }
+        }),
+        {
+            threshold:Array.from(
+                {length:21},
+                (_,i)=>i/20
+            )
+        }
+    );
+
+    $$('.sc').forEach(s=>{
+        s.dataset.s='off';
+        io.observe(s);
+    });
+
+    tick();
+}
 const ph=(src,i,c)=>`<div class="en ${c}">${src?`<img class=ph src="${esc(src)}" alt="" ${i>1?'loading=lazy':''}>`:`<div class=ph style="background:linear-gradient(${140+i*37}deg,hsl(${28+i*6} 16% ${9+i%4*4}%),hsl(${36+i*5} 26% ${26+i%3*9}%))"></div>`}</div>`;
 function scene(m,i,n,prev){
  const bg=m.k=='x'?ph(prev,i+2,'bk')+ph(m.img,i,'fr z3'):ph(m.img,i,Z[i%7]);
@@ -160,5 +347,9 @@ function admin(){
  app.innerHTML=`<div class=adm><aside><b>TEACHER BIRTHDAY</b>${[['overview','Overview'],['wishes','Wishes'],['memories','Memories'],['hero','Hero'],['content','Content'],['spam','Anti-spam'],['settings','Settings']].map(([k,l])=>`<a data-t=${k} class="${k==TAB?'on':''}">${l}</a>`).join('')}<a href="#/" class=ext>↗ View Website</a><a id=out>Logout</a></aside><main id=pn></main></div>`;
  $$('aside [data-t]').forEach(a=>a.onclick=()=>{TAB=a.dataset.t;admin()});$('#out').onclick=()=>{ADM=0;admin()};PN[TAB]($('#pn'))}
 function route(){const h=location.hash.slice(1)||'/';scrollTo(0,0);({'/wishes':wishes,'/wishes/view':view,'/admin':admin}[h]||home)()}
-addEventListener('hashchange',route);route();
+addEventListener('hashchange',route);
+
+loadData().then(()=>{
+    route();
+});
 </script></body></html>
