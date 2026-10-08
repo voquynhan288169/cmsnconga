@@ -61,6 +61,13 @@ outline:0;
 .sc + .sc{
 margin-top:-1px;
 }
+/* Section cao hơn màn hình thì được phép cuộn thay vì bị cắt */
+.sc.flow{
+  height:auto;
+  min-height:100svh;
+  overflow:visible;
+}
+.sc.flow .cp{padding:8vh 6vw}
 .lt.dk{
 background:var(--black);
 color:var(--cream);
@@ -95,15 +102,7 @@ opacity:calc(.6 + var(--a,0)*.4)
 .sc[data-s=off] .z5{transform:rotate(-2deg) scale(1.04);opacity:0}
 .sc[data-s=off] .z6{filter:blur(20px);opacity:0}
 .cp{position:relative;z-index:3;text-align:center;padding:12vh 6vw;transform:translateY(calc(var(--p,0)*-30px))}
-.hc{
-position:absolute;
-left:var(--hx,6vw);
-bottom:var(--hy,16vh);
-text-align:left;
-padding:0;
-color:var(--hc,var(--cream));
-transition:left .3s ease,bottom .3s ease,color .3s ease;
-}
+.hc{position:absolute;left:0;bottom:0;text-align:left;padding:0 6vw 16vh}
 .lb{position:absolute;left:6vw;bottom:12vh;text-align:left;padding:0;max-width:85vw}.lb.r{left:auto;right:6vw;text-align:right}
 .gt{position:absolute;left:4vw;bottom:6vh;text-align:left;padding:0}
 .tx{--t:1.3s var(--e) calc(var(--d,0)*.18s + .2s);white-space:pre-line;transition:opacity var(--t),transform var(--t),filter var(--t),clip-path var(--t)}
@@ -159,16 +158,7 @@ cite{font-style:normal;font-size:12px;letter-spacing:.3em;text-transform:upperca
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],K='tb_cms1';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const I0=()=>({dev:Math.random().toString(36).slice(2),
-H:{
-img:'',
-label:'A COLLECTION OF MEMORIES',
-head:'CHÚC MỪNG SINH NHẬT',
-name:'CÔ PHẠM THỊ\nQUỲNH NGA',
-scroll:'SCROLL TO BEGIN',
-color:'#F5F1EA',
-x:6,
-y:16
-},
+H:{img:'',label:'A COLLECTION OF MEMORIES',head:'CHÚC MỪNG SINH NHẬT',name:'CÔ PHẠM THỊ\nQUỲNH NGA',scroll:'SCROLL TO BEGIN'},
 T:{teacher:'Phạm Thị Quỳnh Nga',ctaT:'MỘT ĐIỀU MUỐN NÓI VỚI CÔ?',ctaD:'Nếu có một lời muốn gửi đến cô\ntrong ngày đặc biệt này...',cta:'GỬI LỜI CHÚC →',fin:'CẢM ƠN CÔ\nVÌ TẤT CẢ.',msg:'Chúc cô Phạm Thị Quỳnh Nga\nmột tuổi mới thật nhiều niềm vui,\nsức khỏe, hạnh phúc\nvà thật nhiều khoảnh khắc đáng nhớ.',bd:'HAPPY BIRTHDAY,\nCÔ NGA ♡',wT:'MỘT LỜI NHẮN\nDÀNH CHO CÔ',wD:'Hãy viết điều bạn muốn nói\nvới cô Phạm Thị Quỳnh Nga.',ok:'CẢM ƠN BẠN.',okD:'Lời chúc của bạn\nđã trở thành một phần\ncủa câu chuyện này.',vT:'NHỮNG ĐIỀU\nCHÚNG EM MUỐN NÓI'},
 M:[['Những ngày đầu tiên','Một chương mới bắt đầu.','s'],['Những tiết học','Từng bài giảng, từng ánh nhìn.','s'],['Những tiếng cười','','g'],['Những khoảnh khắc','','x'],['','','c'],['Những kỷ niệm','','g'],['Những điều chúng em sẽ nhớ','Cảm ơn cô.','x']].map(([t,c,k],i)=>({id:i,t,c,k,on:true,img:''})),
 A:{ip10:3,ip24:10,g24:50,cd:60,max:500,dup:30,on:true,mod:false,test:false},W:[],L:[],rl:0});
@@ -306,11 +296,7 @@ function home(){
  const {H,T,M}=D,vis=M.filter(m=>m.on);let prev=H.img;
  const sc=vis.map((m,i)=>{const h=scene(m,i,vis.length,prev);prev=m.img;return h}).join('');
  app.innerHTML=`${seen?'':`<div id=ld><p class=l1>FOR A VERY SPECIAL TEACHER</p><p class=l2>${esc(T.teacher.toUpperCase())}</p><i></i></div>`}
-<section class="sc pt">${ph(H.img,0,'z0')}<div class="cp hc" style="--hx:${Number(H.x??6)}vw;--hy:${Number(H.y??16)}vh;--hc:${esc(H.color||'#F5F1EA')}">
-<p class="tx sm" style=--d:2>${esc(H.label)}</p>
-<p class="tx hd" style=--d:3>${esc(H.head)}</p>
-<h1 class="tx nm" style=--d:4>${esc(H.name)}</h1>
-</div>
+<section class="sc pt">${ph(H.img,0,'z0')}<div class=ov></div><div class="cp hc"><p class="tx sm" style=--d:2>${esc(H.label)}</p><p class="tx hd" style=--d:3>${esc(H.head)}</p><h1 class="tx nm" style=--d:4>${esc(H.name)}</h1></div><div class="tx sl sm" style=--d:7>${esc(H.scroll)}<i></i></div></section>${sc}
 <section class=sc><div class=cp><h2 class="tx big" style=--d:1>${esc(T.ctaT)}</h2><p class="tx pr" style=--d:2>${esc(T.ctaD)}</p><a class="tx lk" style=--d:3 href="#/wishes">${esc(T.cta)}</a><br><a class="tx lk" style=--d:4 href="#/wishes/view">XEM NHỮNG LỜI CHÚC →</a></div></section>
 <section class="sc lt fin"><i class=grain></i><div class=cp><h2 class="tx big" style=--d:1>${esc(T.fin)}</h2><p class="tx pr" style=--d:3>${esc(T.msg)}</p><p class="tx big bd" style=--d:5>${esc(T.bd)}</p></div></section>`;
  if(seen)return watch();seen=1;
@@ -323,15 +309,15 @@ function submit(n,m){
  D.L.push({t,p:D.dev});D.W.push({id:t+'-'+Math.random().toString(36).slice(2,6),name:n.slice(0,40),message:m,status:A.mod?'pending':'visible',isTest:false,createdAt:t,ipHash:D.dev});save();return''}
 function wishes(){
  const {T,A}=D;
- if(!A.on){app.innerHTML=`<main class="sc lt"><div class=cp><h1 class="tx big" style="--d:1;font-size:clamp(30px,5vw,64px)">HIỆN TẠI CÔ ĐANG NHẬN RẤT NHIỀU LỜI CHÚC ♡</h1><p class="tx pr" style=--d:2>Hệ thống tạm đóng lời chúc.\nBạn vẫn có thể xem những lời chúc đã gửi.</p><a class="tx lk" style=--d:3 href="#/wishes/view">XEM NHỮNG LỜI CHÚC →</a><br><a class="tx lk" style=--d:4 href="#/">← VỀ TRANG KỶ NIỆM</a></div></main>`;return watch()}
- app.innerHTML=`<main class="sc lt" id=wp><form id=wf class=cp autocomplete=off><h1 class="tx big" style=--d:1>${esc(T.wT)}</h1><p class="tx pr" style="--d:2;text-align:center">${esc(T.wD)}</p><label class=tx style=--d:3>Tên của bạn<input name=n maxlength=40></label><label class=tx style=--d:4>Viết lời chúc của bạn...<textarea name=m rows=4 maxlength=${A.max}></textarea></label><p id=er class=er></p><button class="tx lk" style=--d:5>GỬI LỜI CHÚC →</button></form></main>`;
+ if(!A.on){app.innerHTML=`<main class="sc lt flow"><div class=cp><h1 class="tx big" style="--d:1;font-size:clamp(30px,5vw,64px)">HIỆN TẠI CÔ ĐANG NHẬN RẤT NHIỀU LỜI CHÚC ♡</h1><p class="tx pr" style=--d:2>Hệ thống tạm đóng lời chúc.\nBạn vẫn có thể xem những lời chúc đã gửi.</p><a class="tx lk" style=--d:3 href="#/wishes/view">XEM NHỮNG LỜI CHÚC →</a><br><a class="tx lk" style=--d:4 href="#/">← VỀ TRANG KỶ NIỆM</a></div></main>`;return watch()}
+ app.innerHTML=`<main class="sc lt flow" id=wp><form id=wf class=cp autocomplete=off><h1 class="tx big" style=--d:1>${esc(T.wT)}</h1><p class="tx pr" style="--d:2;text-align:center">${esc(T.wD)}</p><label class=tx style=--d:3>Tên của bạn<input name=n maxlength=40></label><label class=tx style=--d:4>Viết lời chúc của bạn...<textarea name=m rows=4 maxlength=${A.max}></textarea></label><p id=er class=er></p><button class="tx lk" style=--d:5>GỬI LỜI CHÚC →</button></form></main>`;
  $('#wf').onsubmit=e=>{e.preventDefault();const f=e.target,r=submit(f.n.value.trim()||'Ẩn danh',f.m.value.trim());if(r)return $('#er').textContent=r;
   const w=$('#wp');w.classList.add('dk');f.style.opacity=0;
   setTimeout(()=>{w.dataset.s='off';w.innerHTML=`<div class=cp><h1 class="tx big" style=--d:1>${esc(T.ok)}</h1><p class="tx pr" style=--d:2>${esc(T.okD)}</p>${D.A.mod?'<p class="tx sm" style=--d:3>Lời chúc sẽ xuất hiện sau khi được duyệt.</p>':''}<a class="tx lk" style=--d:4 href="#/">← VỀ TRANG KỶ NIỆM</a><br><a class="tx lk" style=--d:5 href="#/wishes/view">XEM NHỮNG LỜI CHÚC →</a></div>`;w.offsetWidth;w.dataset.s='on'},1000)};
  watch()}
 function view(){
  const T=D.T,w=D.W.filter(x=>x.status=='visible').sort((a,b)=>a.createdAt-b.createdAt);
- app.innerHTML=`<section class=sc><div class=cp><h1 class="tx big" style=--d:1>${esc(T.vT)}</h1><p class="tx sm" style=--d:3>SCROLL ↓</p></div></section>${w.map((x,i)=>`<section class="sc ch${i%2?'':' lt'}"><div class=cp><span class="tx sm" style=--d:1>${String(i+1).padStart(2,'0')}</span><blockquote class="tx w${i%3}${x.message.length>140?' sm2':''}" style=--d:2>“${esc(x.message)}”</blockquote><cite class=tx style=--d:4>— ${esc(x.name)}</cite></div></section>`).join('')||`<section class=sc><p class="tx pr" style=--d:1>Chưa có lời chúc nào.\nHãy là người đầu tiên.</p></section>`}<section class="sc lt"><div class=cp><a class="tx lk" style=--d:1 href="#/wishes">GỬI LỜI CHÚC →</a><br><a class="tx lk" style=--d:2 href="#/">← VỀ TRANG KỶ NIỆM</a></div></section>`;watch()}
+ app.innerHTML=`<section class=sc><div class=cp><h1 class="tx big" style=--d:1>${esc(T.vT)}</h1><p class="tx sm" style=--d:3>SCROLL ↓</p></div></section>${w.map((x,i)=>`<section class="sc ch flow${i%2?'':' lt'}"><div class=cp><span class="tx sm" style=--d:1>${String(i+1).padStart(2,'0')}</span><blockquote class="tx w${i%3}${x.message.length>140?' sm2':''}" style=--d:2>“${esc(x.message)}”</blockquote><cite class=tx style=--d:4>— ${esc(x.name)}</cite></div></section>`).join('')||`<section class=sc><p class="tx pr" style=--d:1>Chưa có lời chúc nào.\nHãy là người đầu tiên.</p></section>`}<section class="sc lt"><div class=cp><a class="tx lk" style=--d:1 href="#/wishes">GỬI LỜI CHÚC →</a><br><a class="tx lk" style=--d:2 href="#/">← VỀ TRANG KỶ NIỆM</a></div></section>`;watch()}
 /* ---------- ADMIN ---------- */
 const sha=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))].map(x=>x.toString(16).padStart(2,'0')).join('');
 const img=f=>new Promise(r=>{if(!f)return r('');const u=URL.createObjectURL(f),i=new Image();i.onload=()=>{const s=Math.min(1,1280/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*s;c.height=i.height*s;c.getContext('2d').drawImage(i,0,0,c.width,c.height);URL.revokeObjectURL(u);r(c.toDataURL('image/jpeg',.72))};i.onerror=()=>r('');i.src=u});
@@ -354,111 +340,8 @@ memories(p){const rd=()=>$$('.mc',p).forEach((c,i)=>R(c,D.M[i])),idx=e=>+e.close
  $$('[data-del]',p).forEach(b=>b.onclick=()=>ask('Xóa memory này?',()=>{rd();D.M.splice(idx(b),1);save();admin()}));
  $('#add').onclick=()=>{rd();D.M.push({id:Date.now(),t:'Tiêu đề mới',c:'',k:'s',on:true,img:''});save();admin()};
  let from;$$('.mc',p).forEach(c=>{c.ondragstart=()=>from=+c.dataset.i;c.ondragover=e=>e.preventDefault();c.ondrop=()=>{rd();D.M.splice(+c.dataset.i,0,D.M.splice(from,1)[0]);save();admin()}})},
-hero(p){
-    const H=D.H;
-
-    if(H.color===undefined)H.color='#F5F1EA';
-    if(H.x===undefined)H.x=6;
-    if(H.y===undefined)H.y=16;
-
-    p.innerHTML=`
-        <h1>Hero</h1>
-
-        <div class=th style="max-width:360px;margin-bottom:10px;${H.img?`background-image:url('${esc(H.img)}')`:''}">
-            ${H.img?'':'Chưa có ảnh'}
-        </div>
-
-        <label class=btn>
-            UPLOAD / CHANGE IMAGE
-            <input type=file accept="image/*" hidden id=up>
-        </label>
-
-        ${F(H,[
-            ['head','Heading'],
-            ['name','Name','a'],
-            ['label','Small label'],
-            ['scroll','Scroll label']
-        ])}
-
-        <h3>Giao diện chữ Hero</h3>
-
-        <label>
-            Màu chữ
-            <input
-                type=color
-                data-k=color
-                value="${esc(H.color)}"
-                style="width:70px;height:42px;padding:2px;cursor:pointer"
-            >
-        </label>
-
-        <label>
-            Vị trí trái / phải
-            <input
-                type=range
-                min=0
-                max=90
-                step=1
-                data-k=x
-                value="${Number(H.x)}"
-                oninput="this.nextElementSibling.value=this.value+'%'"
-            >
-            <output>${Number(H.x)}%</output>
-        </label>
-
-        <label>
-            Vị trí trên / dưới
-            <input
-                type=range
-                min=0
-                max=90
-                step=1
-                data-k=y
-                value="${Number(H.y)}"
-                oninput="this.nextElementSibling.value=this.value+'%'"
-            >
-            <output>${Number(H.y)}%</output>
-        </label>
-
-        <p style="opacity:.7;margin:10px 0">
-            X càng lớn → chữ càng sang phải.<br>
-            Y càng lớn → chữ càng lên trên.
-        </p>
-
-        <button id=resetHero>↺ ĐẶT LẠI VỊ TRÍ</button>
-        <button id=sv class=pri>LƯU</button>
-    `;
-
-    $('#up').onchange=async e=>{
-        const d=await img(e.target.files[0]);
-
-        if(d){
-            H.img=d;
-            save();
-            admin();
-        }
-    };
-
-    $('#resetHero').onclick=()=>{
-        H.x=6;
-        H.y=16;
-        admin();
-    };
-
-    $('#sv').onclick=()=>{
-        R(p,H);
-
-        H.x=Math.max(0,Math.min(90,Number(H.x)||0));
-        H.y=Math.max(0,Math.min(90,Number(H.y)||0));
-
-        if(!/^#[0-9A-Fa-f]{6}$/.test(H.color)){
-            H.color='#F5F1EA';
-        }
-
-        save();
-        toast('Đã lưu Hero');
-    };
-},
+hero(p){const H=D.H;p.innerHTML=`<h1>Hero</h1><div class=th style="max-width:360px;margin-bottom:10px;${H.img?`background-image:url('${esc(H.img)}')`:''}">${H.img?'':'Chưa có ảnh'}</div><label class=btn>UPLOAD / CHANGE IMAGE<input type=file accept="image/*" hidden id=up></label>${F(H,[['head','Heading'],['name','Name','a'],['label','Small label'],['scroll','Scroll label']])}<button id=sv class=pri>LƯU</button>`;
+ $('#up').onchange=async e=>{const d=await img(e.target.files[0]);if(d){H.img=d;save();admin()}};$('#sv').onclick=()=>{R(p,H);save();toast('Đã lưu')}},
 content(p){p.innerHTML=`<h1>Nội dung</h1>${F(D.T,[['teacher','Tên giáo viên'],['ctaT','CTA — tiêu đề'],['ctaD','CTA — mô tả','a'],['cta','CTA — nút'],['fin','Final message','a'],['msg','Birthday message','a'],['bd','Lời kết','a'],['wT','Trang gửi lời chúc — tiêu đề','a'],['wD','Trang gửi lời chúc — mô tả','a'],['ok','Thank-you — tiêu đề'],['okD','Thank-you — nội dung','a'],['vT','Trang xem lời chúc — tiêu đề','a']])}<p style="margin-bottom:12px">Tiêu đề & caption từng memory: tab Memories.</p><button id=sv class=pri>LƯU</button>`;$('#sv').onclick=()=>{R(p,D.T);save();toast('Đã lưu')}},
 spam(p){const A=D.A;p.innerHTML=`<h1>Anti-spam</h1><label><input type=checkbox data-k=on ${A.on?'checked':''}> NHẬN LỜI CHÚC (ON / OFF)</label><label><input type=checkbox data-k=mod ${A.mod?'checked':''}> DUYỆT LỜI CHÚC: phải duyệt trước (status = pending)</label>${F(A,[['ip10','Số lời chúc tối đa / IP / 10 phút','n'],['ip24','Số lời chúc tối đa / IP / 24 giờ','n'],['g24','Tổng lời chúc tối đa toàn website / 24 giờ','n'],['cd','Cooldown giữa 2 lần gửi (giây)','n'],['max','Độ dài lời chúc tối đa (ký tự)','n'],['dup','Duplicate message cooldown (phút)','n']])}<button id=sv class=pri>LƯU CÀI ĐẶT</button> <button id=rr class=dg>RESET RATE LIMITS</button>`;
  $('#sv').onclick=()=>{R(p,A);save();toast('Đã lưu cài đặt')};$('#rr').onclick=()=>ask('Reset toàn bộ bộ đếm rate-limit?',()=>{D.L=[];D.rl=0;save();toast('Đã reset');admin()})},
