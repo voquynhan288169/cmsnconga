@@ -154,6 +154,7 @@ cite{font-style:normal;font-size:calc(12px*var(--fs,1));letter-spacing:.3em;text
 .toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--af);color:var(--ab);padding:10px 18px;border-radius:99px;z-index:120}
 @media(max-width:760px){.adm{grid-template-columns:1fr}.adm aside{position:static;height:auto;flex-direction:row;overflow-x:auto;padding:12px}.adm aside b{display:none}.adm main{padding:16px}.mc{grid-template-columns:1fr}.wi{flex-direction:column}.sc[data-s=off] .z0,.sc[data-s=off] .z6{filter:blur(6px)}}
 @media(prefers-reduced-motion:reduce){*,::before,::after{transition:none!important;animation-duration:.01ms!important}.ph,.cp{transform:none!important}}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}.x{animation:shake .4s}
 </style></head><body><div id="app"></div><script>
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],K='tb_cms1';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -355,6 +356,19 @@ style(p){D.S=D.S||{};const T=D.T,H=D.H,sl=[['hl','Hero — nhãn nhỏ',H.label]
  $$('[data-f=c]',p).forEach(i=>i.oninput=()=>i.dataset.set=1);
  $$('[data-rs]',p).forEach(b=>b.onclick=()=>{const c=b.closest('[data-sk]');$('[data-f=x]',c).value=0;$('[data-f=y]',c).value=0;$('[data-f=s]',c).value=100;const k=$('[data-f=c]',c);k.value='#ffffff';k.dataset.set=0});
  $('#sv').onclick=()=>{$$('[data-sk]',p).forEach(c=>{const g=f=>$('[data-f='+f+']',c),o={x:+g('x').value||0,y:+g('y').value||0,s:+g('s').value||100,c:g('c').dataset.set=='1'?g('c').value:''};o.x||o.y||o.s!=100||o.c?D.S[c.dataset.sk]=o:delete D.S[c.dataset.sk]});save('Đã lưu kiểu chữ (vị trí / màu / cỡ)');toast('Đã lưu')}},
+gate(p){const G=D.G=D.G||{on:false,m:'all',v:1,title:'ĐOÁN MẬT KHẨU ĐỂ MỞ WEBSITE',qs:[]};
+ const row=(x,i)=>`<div class=card data-qi=${i} data-old="${esc(JSON.stringify(x.a||[]))}" style="margin-bottom:10px"><label>Câu hỏi<input data-f=q value="${esc(x.q||'')}"></label><label>Đáp án chấp nhận (cách nhau bằng dấu |) <small>${x.a&&x.a.length?'· đã đặt '+x.a.length+' đáp án — để trống để giữ nguyên':'· chưa có đáp án'}</small><input data-f=a placeholder="vd: hà nội | ha noi"></label><label>Gợi ý (tuỳ chọn)<input data-f=h value="${esc(x.h||'')}"></label><button class=dg data-qd>Xóa câu hỏi</button></div>`;
+ p.innerHTML=`<h1>Password game</h1><p style="margin-bottom:12px">Khách phải đoán đúng mật khẩu (trả lời câu hỏi) mới mở được website. Không phân biệt hoa/thường và dấu tiếng Việt. Trang /admin không bị chặn.</p><label><input type=checkbox id=gon ${G.on?'checked':''}> Bật cổng đoán mật khẩu</label><label>Tiêu đề<input id=gt value="${esc(G.title)}"></label><label>Cách hỏi<select id=gm><option value=all ${G.m=='all'?'selected':''}>Trả lời lần lượt tất cả câu hỏi</option><option value=one ${G.m=='one'?'selected':''}>Hỏi ngẫu nhiên 1 câu</option></select></label><div id=ql>${G.qs.map(row).join('')}</div><p><button id=qa>+ Thêm câu hỏi</button> <button id=sv class=pri>LƯU</button> <button id=pv>Thử cổng (xem trước)</button></p>${G.on&&!gq().length?'<p class=er>Chưa có câu hỏi nào có đáp án nên cổng chưa hoạt động.</p>':''}<small>Đáp án được lưu dạng mã hóa (hash) và chỉ chặn ở giao diện, không phải bảo mật tuyệt đối.</small>`;
+ $('#ql').onclick=e=>{const b=e.target.closest('[data-qd]');if(b)b.closest('[data-qi]').remove()};
+ $('#qa').onclick=()=>$('#ql').insertAdjacentHTML('beforeend',row({},-1));
+ $('#pv').onclick=()=>gq().length?gate(()=>admin(),1):toast('Chưa có câu hỏi nào có đáp án');
+ $('#sv').onclick=async()=>{const before=JSON.stringify([G.qs,G.m]),qs=[];
+  for(const c of $$('[data-qi]',p)){const g=f=>$('[data-f='+f+']',c).value,q=g('q').trim();if(!q)continue;
+   const raw=g('a').split('|').map(nz).filter(Boolean),a=raw.length?await Promise.all(raw.map(x=>sha('tb|'+x))):JSON.parse(c.dataset.old||'[]');
+   qs.push({q,a,h:g('h').trim()})}
+  G.on=$('#gon').checked;G.title=$('#gt').value;G.m=$('#gm').value;G.qs=qs;
+  if(before!=JSON.stringify([G.qs,G.m]))G.v=(G.v||1)+1;
+  save('Cập nhật Password game');toast('Đã lưu');admin()}},
 log(p){const LF=[['all','Tất cả'],['login','Đăng nhập'],['wish','Lời chúc'],['spam','Spam'],['admin','Admin']],G=(D.LG||[]).filter(l=>LGF=='all'||l.y==LGF);
  p.innerHTML=`<h1>Log</h1><p style="margin-bottom:12px">Ghi lại đăng nhập, thay đổi trong admin, lời chúc gửi / bị chặn. Giữ 500 dòng mới nhất, không lưu IP.</p><div class=tabs>${LF.map(([k,l])=>`<a data-lf=${k} class="${k==LGF?'on':''}">${l}</a>`).join('')}</div><p style="margin-bottom:12px"><button id=lx>Tải log (JSON)</button> <button id=lc class=dg>Xóa log</button> <small>${G.length} dòng</small></p>${G.map(l=>`<div class=wi><div><b>${esc(l.y)}</b> <small>${new Date(l.t).toLocaleString('vi-VN')}</small><p>${esc(l.m)}</p></div></div>`).join('')||'<p>Chưa có log.</p>'}`;
  $$('[data-lf]',p).forEach(a=>a.onclick=()=>{LGF=a.dataset.lf;admin()});
@@ -366,9 +380,25 @@ settings(p){p.innerHTML=`<h1>Settings</h1><h3>TEST MODE</h3><label><input type=c
 function admin(){
  if(!ADM){const first=!D.pw;app.innerHTML=`<div class="adm login"><form id=lg class=box><b>TEACHER BIRTHDAY</b><p>${first?'Tạo mật khẩu admin (lưu dạng hash trong trình duyệt này)':'Đăng nhập Admin'}</p><input type=password id=pw placeholder="Mật khẩu (≥ 8 ký tự)" minlength=8 required><button class=pri>${first?'Tạo & vào':'Vào'}</button><p id=er class=er></p><small>Demo client-only — bản thật cần xác thực & phân quyền phía server.</small></form></div>`;
   $('#lg').onsubmit=async e=>{e.preventDefault();const h=await sha($('#pw').value);if(first){D.pw=h;save()}else if(h!=D.pw){LOG('login','Đăng nhập sai mật khẩu');save(null);return $('#er').textContent='Sai mật khẩu.'}ADM=1;LOG('login',first?'Tạo mật khẩu & đăng nhập admin':'Đăng nhập admin');save(null);admin()};return}
- app.innerHTML=`<div class=adm><aside><b>TEACHER BIRTHDAY</b>${[['overview','Overview'],['wishes','Wishes'],['memories','Memories'],['hero','Hero'],['content','Content'],['style','Text style'],['spam','Anti-spam'],['log','Log'],['settings','Settings']].map(([k,l])=>`<a data-t=${k} class="${k==TAB?'on':''}">${l}</a>`).join('')}<a href="#/" class=ext>↗ View Website</a><a id=out>Logout</a></aside><main id=pn></main></div>`;
+ app.innerHTML=`<div class=adm><aside><b>TEACHER BIRTHDAY</b>${[['overview','Overview'],['wishes','Wishes'],['memories','Memories'],['hero','Hero'],['content','Content'],['style','Text style'],['spam','Anti-spam'],['gate','Password game'],['log','Log'],['settings','Settings']].map(([k,l])=>`<a data-t=${k} class="${k==TAB?'on':''}">${l}</a>`).join('')}<a href="#/" class=ext>↗ View Website</a><a id=out>Logout</a></aside><main id=pn></main></div>`;
  $$('aside [data-t]').forEach(a=>a.onclick=()=>{TAB=a.dataset.t;admin()});$('#out').onclick=()=>{LOG('login','Đăng xuất');save(null);ADM=0;admin()};PN[TAB]($('#pn'))}
-function route(){const h=location.hash.slice(1)||'/';scrollTo(0,0);({'/wishes':wishes,'/wishes/view':view,'/admin':admin}[h]||home)()}
+let GOK=0;
+const nz=s=>String(s).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/\s+/g,' ');
+const gq=()=>((D.G&&D.G.qs)||[]).filter(q=>q.a&&q.a.length);
+const gateOn=()=>{if(ADM||GOK||!D.G||!D.G.on||!gq().length)return false;try{return localStorage.getItem('tb_ok')!=String(D.G.v)}catch(e){return true}};
+function gate(done,pv){
+ const G=D.G,qs=gq(),ord=G.m=='one'?[Math.floor(Math.random()*qs.length)]:qs.map((_,i)=>i);let n=0;
+ const show=()=>{const q=qs[ord[n]];
+  app.innerHTML=`<main class="sc flow"><form id=wf class=cp autocomplete=off><p class="tx sm" style="--d:1;text-align:center">${esc(G.title)}${ord.length>1?` · ${n+1} / ${ord.length}`:''}</p><h1 class="tx big" style="--d:2;font-size:clamp(26px,4.5vw,56px)">${esc(q.q)}</h1><label class=tx style=--d:3>Mật khẩu của bạn<input name=a autocomplete=off></label><p id=er class=er></p>${q.h?'<p class="tx sm" id=hn style="--d:4;text-align:center;cursor:pointer">Gợi ý?</p>':''}<button class="tx lk" style=--d:5>MỞ →</button></form></main>`;
+  watch();const f=$('#wf');f.a.focus();
+  if(q.h)$('#hn').onclick=e=>{e.target.textContent=q.h};
+  f.onsubmit=async e=>{e.preventDefault();const h=await sha('tb|'+nz(f.a.value));
+   if(!q.a.includes(h)){$('#er').textContent='Chưa đúng, thử lại nhé.';f.classList.remove('x');f.offsetWidth;f.classList.add('x');f.a.select();return}
+   if(++n<ord.length)return show();
+   if(!pv){GOK=1;try{localStorage.setItem('tb_ok',String(G.v))}catch(_){}}
+   f.style.opacity=0;setTimeout(done,800)}};
+ show()}
+function route(){const h=location.hash.slice(1)||'/';scrollTo(0,0);if(h!='/admin'&&gateOn())return gate(route);({'/wishes':wishes,'/wishes/view':view,'/admin':admin}[h]||home)()}
 addEventListener('hashchange',route);
 
 loadData().then(()=>{
